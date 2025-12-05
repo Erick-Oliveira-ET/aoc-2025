@@ -101,7 +101,7 @@ class Decoder:
             if int(new_current) > int(finish):
                 break
 
-            if int(new_current) >= int(start):
+            if int(new_current) >= int(start) and len(new_current) > 1:
                 invalids.add(int(new_current))
 
             new_current = str(int(new_current[0]) + 1) * len(current)
@@ -113,8 +113,6 @@ class Decoder:
 
         multiples = multiples_table.is_multiple_of(len(current))
 
-        new_current = (current[: multiples[0]]) * (len(current) // multiples[0])
-
         for multiple in multiples:
             if multiple > len(current) // 2:
                 break
@@ -123,11 +121,11 @@ class Decoder:
             while True:
                 if int(new_current) > int(finish):
                     break
-                if int(new_current) >= int(start):
+                if int(new_current) >= int(start) and len(new_current) > 1:
                     invalids.add(int(new_current))
 
                 new_current = (str(int(new_current[:multiple]) + 1)) * (
-                    len(current) // multiples[0]
+                    (len(new_current) // multiple)
                 )
 
         return list(invalids)
@@ -163,13 +161,16 @@ class Decoder:
         return "1" + "0" * len(current)
 
     def invalid_sum(self, multiple_ranges: list[str]):
-        invalid_sum = 0
+        all_invalids = set()
 
         for range_str in multiple_ranges:
-            for invalid in self.find_invalid_id_in_range(range_str):
-                invalid_sum += invalid
+            invalid_list = self.find_invalid_id_in_range(range_str)
+            invalid_list.sort()
+            print(f"{range_str} -> {invalid_list}")
+            for invalid in invalid_list:
+                all_invalids.add(invalid)
 
-        return invalid_sum
+        return sum(list(all_invalids))
 
 
 decoder = Decoder()
@@ -196,10 +197,12 @@ assert (
 
 print("Complete test successfully!")
 
-print("Running challenge (test.txt)")
+print("\n\nRunning challenge (test.txt)")
 
 file = open("./day_2/test.txt").read()
 # file only has one line
 ranges_list = file.split(",")
 
-print(f"The total invalid sum is {decoder.invalid_sum(ranges_list)}")
+challenge_invalid_sum = decoder.invalid_sum(ranges_list)
+
+print(f"The total invalid sum is {challenge_invalid_sum}")
