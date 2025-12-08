@@ -94,6 +94,6 @@ assert (
     == 14
 )
 
-challenge = open("./day_5/test.txt").read()
+challenge = open("./day_5/input_breno.txt").read()
 
 print(Cafeteria(*split_input_range_items(challenge)).count_fresh_ingredients_id_total())
